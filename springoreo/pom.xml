@@ -19,15 +19,15 @@
 
 		<!-- log jdbc -->
 		<dependency>
-			<groupId>org.lazyluke</groupId>
+			<!-- <groupId>org.lazyluke</groupId>
 			<artifactId>log4jdbc-remix</artifactId>
-			<version>0.2.7</version>
+			<version>0.2.7</version> -->
 		</dependency>
 
 		<dependency>
-			<groupId>org.lazyluke</groupId>
+			<!-- <groupId>org.lazyluke</groupId>
 			<artifactId>log4jdbc-remix</artifactId>
-			<version>0.2.7</version>
+			<version>0.2.7</version> -->
 		</dependency>
 
 		<dependency>
@@ -84,10 +84,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
+			<!-- <groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${org.slf4j-version}</version>
-			<scope>runtime</scope>
+			<scope>runtime</scope> -->
 		</dependency>
 
 		<dependency>
