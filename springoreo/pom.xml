@@ -31,9 +31,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
+			<!-- <groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>3.9.6</version>
+			<version>3.9.6</version> -->
 		</dependency>
 
 		<dependency>
@@ -91,7 +91,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>log4j</groupId>
+			<!-- <groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>2.2.15</version>
 			<exclusions>
@@ -112,7 +112,7 @@
 					<artifactId>jmxri</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>runtime</scope>
+			<scope>runtime</scope> -->
 		</dependency>
 
 		<dependency>
