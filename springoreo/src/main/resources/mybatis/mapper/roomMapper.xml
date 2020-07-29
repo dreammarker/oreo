@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.RoomDAO">
+<insert id="RoomInsert" parameterType="RoomVO">
+	insert into room
+	values(SEQROOM.NEXTVAL,#{roomName},80,#{theaterId})
+</insert>
+
+<select id="roomCheck" resultType="String"  parameterType="RoomVO">
+	SELECT room_id
+	FROM   room
+	where  theater_id=#{theaterId}
+	and    room_name=#{roomName}
+</select>
+
+
+
+
+
+</mapper>

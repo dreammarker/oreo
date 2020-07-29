@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.PaymentDAO">
+
+	<!-- 결제내역 전체 조회 -->
+	<select id="getPaymentList" resultType="map" parameterType="paymentVO">
+
+		SELECT PAYMENT_ID as "paymentId",
+		PAYMENT_METHOD as "paymentMethod",
+		PAYMENT_AMOUNT as "paymentAmount",
+		ADVANCE_ID as "advanceId"
+		PAYMENT_MILEAGE as "paymentMileage"
+		FROM PAYMENT
+		ORDER BY PAYMENT_ID
+	</select>
+
+	<!-- 단건 조회 -->
+	<select id="getPayment" resultType="paymentVO" parameterType="string">
+		SELECT PAYMENT_ID as "paymentId",
+		PAYMENT_METHOD as "paymentMethod",
+		PAYMENT_AMOUNT as "paymentAmount",
+		ADVANCE_ID as "advanceId"
+		PAYMENT_MILEAGE as "paymentMileage"
+		FROM PAYMENT
+		WHERE PAYMENT_ID = #{paymentId}
+	</select>
+
+	<!-- 등록 -->
+	<insert id="insertPayment" parameterType="paymentVO">
+
+		<selectKey keyProperty="paymentId" resultType="String" order="BEFORE">
+			select PAYSEQ.nextval from dual
+		</selectKey>
+		INSERT INTO PAYMENT(
+		PAYMENT_ID,
+		PAYMENT_METHOD,
+		PAYMENT_AMOUNT,
+		ADVANCE_ID,
+		PAYMENT_MILEAGE 
+		)
+
+		VALUES (
+		#{paymentId},
+		#{paymentMethod},
+		#{paymentAmount},
+		#{advanceId},
+		#{paymentMileage}
+		)
+	</insert>
+
+	<!-- 수정 -->
+	<update id="updatePayment" parameterType="paymentVO">
+		UPDATE INTO
+		PAYMENT SET
+		PAYMENT_METHOD = #{paymentMethod},
+		PAYMENT_AMOUNT = #{paymentAmount}
+		ADVANCE_ID = #{advanceId},
+		PAYMENT_MILEAGE = #{paymentMileage}
+		WHERE PAYMENT_ID = #{paymentId}
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deletePayment" parameterType="string">
+		DELETE FROM
+		PAYMENT
+		WHERE ADVANCE_ID = #{advanceId}
+	</delete>
+
+	<!-- 프로시저 사용 -->
+	<insert id="stampUpdateProc" statementType="CALLABLE" parameterType="map">
+		{ 
+			call update_stamp( 
+			#{p_advanceId},
+			#{p_custNum},
+			#{cust_mileage},
+			#{adv_seat_num}
+			)
+		}
+	</insert>
+
+</mapper>

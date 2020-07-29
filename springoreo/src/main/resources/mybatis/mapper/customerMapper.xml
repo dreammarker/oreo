@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yedam.movie.CustomerDAO">
+
+	<insert id="CustomerInsert" parameterType="customerVO"
+		statementType="CALLABLE">
+		{call INSERT_CUSTOMER(#{custName},#{custId},
+		#{custPwd},#{custPhone},#{custMail},#{custBirth})}
+	</insert>
+
+	<update id="updateCustomer" parameterType="customerVO">
+		UPDATE CUSTOMER
+		SET CUST_NAME=#{custName},
+		CUST_PWD = #{custPwd} ,
+		CUST_PHONE = #{custPhone},
+		CUST_MAIL = #{custMail}
+		WHERE CUST_ID = #{custId}
+	</update>
+
+	<delete id="deleteCustomer" parameterType="customerVO"
+		statementType="CALLABLE">
+		{call DELETE_CUSTOMER(#{custNum})}
+	</delete>
+
+	<select id="getCustomer" resultType="customerVO" parameterType="customerVO">
+		SELECT CUST_NUM, CUST_NAME, CUST_ID, CUST_PWD, CUST_PHONE, CUST_MAIL,
+		CUST_BIRTH, STAMP, MILEAGE
+		FROM CUSTOMER 
+		<if test="custNum==null">WHERE CUST_ID = #{custId}</if>
+		<if test="custNum!=null">WHERE CUST_NUM = #{custNum}</if>
+		
+		
+	</select>
+
+	<select id="getCustomerList" parameterType="customerVO"
+		resultType="customerVO">
+		SELECT * FROM CUSTOMER
+	</select>
+
+	<select id="loginCheck" parameterType="customerVO" resultType="customerVO">
+		select cust_id, cust_pwd, cust_num ,cust_birth
+		from customer
+		where cust_id=#{custId} and cust_pwd=#{custPwd}
+	</select>
+
+</mapper>
+	

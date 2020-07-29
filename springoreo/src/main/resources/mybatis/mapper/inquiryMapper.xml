@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.impl.InquiryDAO">
+
+	<!-- 전체 조회  -->
+	<select id="getInquiryList" resultType="map" parameterType="searchVO">
+	
+	SELECT A.* FROM(
+	SELECT ROWNUM RN, B.* FROM
+	(
+	SELECT I.INQUIRY_ID as "inquiryId",
+			   I.INQUIRY_TITLE as "inquiryTitle",
+			   I.INQUIRY_CONTENT  as "inquiryContent",
+			   I.INQUIRY_DATE as "inquiryDate",
+			   I.INQUIRY_CHECK as "inquiryCheck",
+			   C.CUST_NUM as "custNum",
+			   C.CUST_ID as "custId"
+		FROM INQUIRY I JOIN CUSTOMER C
+		ON(I.CUST_NUM = C.CUST_NUM)
+		ORDER BY I.INQUIRY_DATE DESC
+	) B	) A  WHERE RN BETWEEN #{first} AND #{last}
+	
+	
+	
+	
+		
+	</select>
+	
+	<select id="getCount" resultType="int">
+		select count(*) from inquiry
+	</select>
+	<!-- 단건 조회  -->
+	<select id="getInquiry" resultType="inquiryVO" parameterType="string">
+		<![CDATA[
+		SELECT I.INQUIRY_ID ,
+			   I.INQUIRY_TITLE,
+			   I.INQUIRY_CONTENT,
+			   I.INQUIRY_DATE ,
+			   I.INQUIRY_CHECK ,
+			   C.CUST_NUM ,
+			   C.CUST_ID
+		FROM INQUIRY I JOIN CUSTOMER C
+		ON(I.CUST_NUM = C.CUST_NUM)
+		WHERE  I.INQUIRY_ID = #{inquiry_id}
+		 ]]>
+	</select>
+
+	<insert id="insertInquiry" parameterType="inquiryVO" >
+
+		<selectKey keyProperty="inquiryId" resultType="string"
+		           order="BEFORE">	
+			SELECT NVL(max(INQUIRY_ID),0)+1 FROM INQUIRY
+		</selectKey>
+		INSERT INTO INQUIRY (
+			INQUIRY_ID, 
+			INQUIRY_TITLE,
+			INQUIRY_CONTENT,
+			INQUIRY_DATE,
+			INQUIRY_CHECK,
+			CUST_NUM
+			)
+		VALUES (
+			#{inquiryId},
+			#{inquiryTitle},
+			#{inquiryContent},
+			SYSDATE,
+			0,
+			#{custNum}
+			)
+	</insert>
+	
+	<update id="inquiryUpdate" parameterType="inquiryVO" >
+		UPDATE INQUIRY SET
+			   INQUIRY_TITLE = #{inquiryTitle},
+			   INQUIRY_CONTENT = #{inquiryContent}
+		WHERE INQUIRY_ID = #{inquiryId}
+	</update>
+	
+	<delete id="deleteInquiry" parameterType="string" >
+		DELETE INQUIRY
+		 WHERE INQUIRY_ID = #{value}
+	</delete>
+	
+	<update id="checkPlus" parameterType="string" >
+		UPDATE INQUIRY SET
+			   INQUIRY_CHECK = INQUIRY_CHECK+1
+		WHERE INQUIRY_ID = #{value}
+	</update>
+</mapper>
+
+
+
+
+
+
+

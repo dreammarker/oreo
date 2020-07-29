@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.ScreenDAO">
+<insert id="Screeninsert" parameterType="ScreenVO"> 
+    insert into screen(screen_id,screen_date,screen_start_time,screen_remain_seat,room_id,movie_id)
+values(screen_sequence.NEXTVAL,#{screenDate},#{screenStartTime},80,#{roomId},#{movieId})
+</insert>
+
+<!-- <update id="updateScreen" parameterType="ScreenVO">
+
+
+</update>
+ -->
+ 
+ <select id="Screencheck" resultType="String"  parameterType="ScreenVO">
+ 	SELECT r.room_id
+ 	from room r, movie m, screen s
+ 	where r.room_id = s.room_id
+ 	and   s.movie_id =m.movie_id
+ 	and   r.room_id = #{roomId}
+ 	and   m.movie_id = #{movieId}
+ 	and   s.screen_start_time = #{screenStartTime}
+ </select>
+    
+    <select id="Checkscreen"   resultType="Map"  parameterType="ScreenSearchVO">
+    select a.* from( select rownum rn , b.*from(
+    select m.movie_title as "movieTitle" , s.screen_start_time as "screenStartTime" , t.theater_name "theaterName"
+    from movie m, screen s, theater t, room r
+    where m.movie_id=s.movie_id
+    and   r.room_id    = s.room_id
+    and   t.theater_id = r.theater_id
+    and   s.screen_date = #{screenDate}
+    )b )a where rn between #{first} and #{last}
+    </select>
+    
+    <select id="getCount" resultType="int">
+		select count(*) from screen
+	</select>
+	
+</mapper>

@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.MovieDAO">
+
+	<select id="movieList" resultType="string">
+		select movie_title
+		from movie
+	</select>
+
+	<update id="movieimgUpdate" parameterType="movieVO">
+
+		update movie
+		set movie_poster=#{moviePoster}
+		where movie_id=#{movieId}
+
+	update movie
+	set movie_poster=#{moviePoster}
+	where movie_title=#{movieTitle}
+
+	</update>
+
+	<select id="movieCheck" resultType="string" parameterType="string">
+		select movie_id
+		from movie
+		where movie_id=#{value}
+	</select>
+
+
+	<!-- 지난영화갯수 -->
+	<select id="countMovie" resultType="integer">
+		select count(*)
+		from (
+		SELECT distinct m.MOVIE_ID as "movieId",
+		m.MOVIE_TITLE as
+		"movieTitle",
+		m.MOVIE_GENRE as "movieGenre",
+		m.MOVIE_SHOWTIME as
+		"movieShowtime",
+		m.MOVIE_AGE as "movieAge",
+		m.MOVIE_DIRECTOR as
+		"movieDirector",
+		m.MOVIE_SUMMARY as "movieSummary",
+		m.MOVIE_TRAILER as
+		"movieTrailer",
+		m.MOVIE_OPEN_DATE as "movieOpenDate",
+		m.END_DATE as
+		"endDate",
+		m.MOVIE_POSTER as "moviePoster"
+
+		FROM MOVIE m
+
+		WHERE TRUNC(SYSDATE) > END_DATE
+		)
+	</select>
+
+	<!-- 관심영화 삭제 -->
+	<delete id="deleteFavoriteMovie" parameterType="string">
+		DELETE FROM FAVORITE
+		WHERE FAVORITE_ID=#{favoriteId}
+	</delete>
+
+	<!-- 관심영화 삽입 -->
+	<insert id="insertFavoriteMovie" parameterType="movieVO">
+		<selectKey keyProperty="favoriteId" resultType="string"
+			order="BEFORE">
+			select favorite_seq.nextval from dual
+		</selectKey>
+		INSERT INTO FAVORITE (
+		FAVORITE_ID,
+		CUST_NUM,
+		MOVIE_ID
+		)
+		VALUES (
+		#{favoriteId},
+		#{custNum},
+		#{movieId}
+		)
+	</insert>
+
+
+	<!-- 현재/지난/예정 상영작 전체 조회 -->
+	<select id="getMovieList" resultType="map" parameterType="movieVO">
+		<if test="search == 'last'">
+		 <![CDATA[
+		SELECT a.* FROM(SELECT rownum rn, b.* FROM (
+		]]>
+		</if>
+		SELECT distinct m.MOVIE_ID
+		as "movieId",
+		m.MOVIE_TITLE as "movieTitle",
+		m.MOVIE_GENRE as
+		"movieGenre",
+		m.MOVIE_SHOWTIME as "movieShowtime",
+		m.MOVIE_AGE as
+		"movieAge",
+		m.MOVIE_DIRECTOR as "movieDirector",
+		m.MOVIE_SUMMARY as
+		"movieSummary",
+		m.MOVIE_TRAILER as "movieTrailer",
+		m.MOVIE_OPEN_DATE as
+		"movieOpenDate",
+		m.END_DATE as "endDate",
+		
+		m.MOVIE_POSTER as
+		"moviePoster"
+
+		
+		<if test="search == 'now'">
+			, s.screen_date as "screenDate"
+		</if>
+		
+		FROM MOVIE m 
+		
+		<if test="search == 'now'">
+			, Screen s
+			where m.movie_id=s.movie_id
+			and s.SCREEN_DATE=#{screenDate}
+			ORDER BY m.MOVIE_TITLE
+		</if>
+
+		<if test="search == 'pre'">
+		 <![CDATA[
+		 WHERE TRUNC(SYSDATE) < MOVIE_OPEN_DATE 
+		 ORDER BY m.MOVIE_TITLE
+		]]>
+		</if>
+
+		<if test="search == 'last'">
+		 <![CDATA[
+		 WHERE TRUNC(SYSDATE) > END_DATE
+		 ORDER BY m.MOVIE_TITLE
+		 ) b ) a
+		WHERE rn between #{first} and #{last}
+		]]>
+		</if>
+
+		
+		
+
+	</select>
+
+	<!-- 관심 영화 전체 조회 -->
+	<select id="getMovieFavoriteList" resultType="map"
+		parameterType="String">
+
+		SELECT M.MOVIE_ID as "movieId",
+		MOVIE_TITLE as
+		"movieTitle",
+		MOVIE_GENRE as "movieGenre",
+		MOVIE_SHOWTIME as
+		"movieShowtime",
+		MOVIE_AGE as "movieAge",
+		MOVIE_DIRECTOR as
+		"movieDirector",
+		MOVIE_SUMMARY as "movieSummary",
+		MOVIE_TRAILER as
+		"movieTrailer",
+		MOVIE_OPEN_DATE as "movieOpenDate",
+		END_DATE as
+		"endDate",
+		MOVIE_POSTER as "moviePoster",
+		FAVORITE_ID as "favoriteId"
+
+
+		FROM MOVIE M
+		JOIN FAVORITE F ON M.MOVIE_ID = F.MOVIE_ID
+
+		WHERE CUST_NUM = #{custNum}
+
+	</select>
+
+	<!-- 영화 단건 조회 -->
+	<select id="getMovieInfo" resultType="movieVO" parameterType="string">
+		<![CDATA[
+		SELECT	MOVIE_ID, 
+				MOVIE_TITLE, 
+				MOVIE_GENRE, 
+				MOVIE_SHOWTIME, 
+				MOVIE_AGE, 
+				MOVIE_DIRECTOR, 
+				MOVIE_SUMMARY,
+				MOVIE_TRAILER, 
+				MOVIE_OPEN_DATE, 
+				END_DATE, 
+				MOVIE_POSTER
+		  FROM  MOVIE 
+		  WHERE MOVIE_ID = #{movieId}
+		 ]]>
+	</select>
+
+
+	<!-- 배우 전체 조회 -->
+	<select id="getActorInfo" resultType="map" parameterType="string">
+		<![CDATA[
+		SELECT	ACTOR_ID 		as "actorId" ,
+				ACTOR_NAME 		as "actorName",
+				ACTOR_PHOTO		as "actorPhoto",
+				ACTOR_ROLE		as "actorRole",
+				CHAR_NAME		as "charName"
+		  FROM  ACTOR
+		  WHERE MOVIE_ID = #{movieId}
+		 ]]>
+	</select>
+
+
+	<!-- 리뷰 전체 조회 -->
+	<select id="getMovieReview" resultType="map" parameterType="string">
+		<![CDATA[
+		SELECT	REVIEW_ID 			as "reviewId",
+				REVIEW_STAR 		as "reviewStar",
+				REVIEW_CONTENT		as "reviewContent",
+				CUST_NUM			as "custNum"
+
+		  FROM  REVIEW
+		  WHERE MOVIE_ID = #{movieId}
+		 ]]>
+	</select>
+
+	<!-- 영화 리뷰 평균 단건 조회 -->
+	<select id="getMovieAvg" resultType="string" parameterType="string">
+		<![CDATA[
+		SELECT	ROUND(AVG(REVIEW_STAR),1)
+		FROM REVIEW
+		WHERE MOVIE_ID = #{movieId}
+		 ]]>
+	</select>
+
+	<!-- 영화등록 -->
+	<insert id="insertMovie" parameterType="movieVO">
+
+		<selectKey keyProperty="movieId" resultType="string" order="BEFORE">
+			SELECT max(MOVIE_ID)+1 FROM MOVIE
+		</selectKey>
+		INSERT INTO MOVIE (
+		MOVIE_ID,
+		MOVIE_TITLE,
+		MOVIE_GENRE,
+		MOVIE_SHOWTIME,
+		MOVIE_AGE,
+		MOVIE_DIRECTOR,
+		MOVIE_SUMMARY,
+		MOVIE_TRAILER,
+		MOVIE_OPEN_DATE,
+		END_DATE,
+		MOVIE_POSTER
+		)
+
+		VALUES (
+		#{movieId},
+		#{movieTitle},
+		#{movieGenre},
+		#{movieShowtime},
+		#{movieAge},
+		#{movieDirector},
+		#{movieSummary},
+		#{movieTrailer},
+		#{movieOpenDate},
+		#{endDate},
+		#{moviePoster}
+		)
+	</insert>
+
+	<!-- 영화수정 -->
+	<update id="updateMovie" parameterType="movieVO">
+		UPDATE MOVIE
+		SET
+		MOVIE_TITLE = #{movieTitle},
+		MOVIE_GENRE = #{movieGenre},
+		MOVIE_SHOWTIME = #{movieShowtime},
+		MOVIE_AGE = #{movieAge},
+		MOVIE_DIRECTOR = #{movieDirector},
+		MOVIE_SUMMARY = #{movieSummary},
+		MOVIE_TRAILER = #{movieTrailer},
+		MOVIE_OPEN_DATE = #{movieOpenDate},
+		END_DATE = #{endDate},
+		MOVIE_POSTER = #{moviePoster}
+		WHERE MOVIE_ID =
+		#{movieId}
+	</update>
+
+	<!-- 영화삭제 -->
+	<delete id="deleteMovie" parameterType="string">
+		DELETE FROM
+		MOVIE
+		WHERE
+		MOVIE_ID = #{movieId}
+	</delete>
+
+	<!-- 리뷰등록 -->
+	<insert id="insertReview" parameterType="reviewVO">
+		<selectKey keyProperty="reviewId" resultType="string" order="BEFORE">
+			select seq_review.nextval from dual
+		</selectKey>
+		INSERT INTO REVIEW (
+		REVIEW_ID,
+		REVIEW_STAR,
+		REVIEW_CONTENT,
+		MOVIE_ID,
+		CUST_NUM
+		)
+		VALUES (
+		#{reviewId},
+		#{reviewStar},
+		#{reviewContent},
+		#{movieId},
+		#{custNum}
+		)
+	</insert>
+
+	<!-- 리뷰삭제 -->
+	<delete id="deleteReview" parameterType="string">
+		DELETE FROM
+		REVIEW
+		WHERE
+		REVIEW_ID = #{reviewId}
+	</delete>
+
+	<select id="getReview" resultType="reviewVO" parameterType="string">
+		SELECT
+		REVIEW_ID,
+		REVIEW_STAR,
+		REVIEW_CONTENT,
+		MOVIE_ID,
+		CUST_NUM
+		FROM
+		REVIEW
+		WHERE REVIEW_ID=#{reviewId}
+	</select>
+</mapper>

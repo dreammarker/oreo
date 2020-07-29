@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <mapper namespace="com.yedam.movie.TheatherDAO">
+   <select id="getTheater_first_loc" resultType="TheatherVO" parameterType="MovieVO">
+   SELECT distinct t.THEATER_FIRST_LOC , s.MOVIE_ID ,m.end_date
+   from theater t, room r, screen s,movie m 
+   where t.THEATER_ID=r.THEATER_ID  
+   and r.room_id=s.ROOM_ID 
+   and s.movie_id = m.movie_id 
+   and s.MOVIE_ID = #{movieId} 
+   and s.screen_date in #{endDate}  
+   </select>
+   
+   <select id="getTheater_second_loc"   resultType="TheatherVO" parameterType="MovieVO">
+   						SELECT distinct t.THEATER_SECOND_LOC , m.MOVIE_ID
+								from theater t, room r, screen s, movie m  
+								 where t.THEATER_ID=r.THEATER_ID 
+								 and r.room_id=s.ROOM_ID 
+								 and s.movie_id = m.movie_id 
+								 and s.MOVIE_ID = #{movieId} 
+								 and t.THEATER_FIRST_LOC= #{theatherFirstLoc}
+								 and s.screen_date in #{endDate}
+								 and s.screen_start_time >= #{screenStartTime}
+   </select>
+   <select id="getScreenCheck" resultType="TheatherVO" parameterType="MovieVO">
+   						SELECT distinct t.THEATER_NAME , t.theater_id ,m.MOVIE_ID
+								from theater t, room r, screen s, movie m  
+								 where t.THEATER_ID=r.THEATER_ID 
+								 and r.room_id=s.ROOM_ID 
+								 and s.movie_id = m.movie_id 
+								 and s.MOVIE_ID = #{movieId}
+								 and t.THEATER_SECOND_LOC= #{theatherSecondLoc}
+								 and s.screen_date in #{endDate}   
+   
+   </select>
+   <select id="getMovie_time" resultType="TheatherVO" parameterType="TheatherVO"> 
+   SELECT distinct r.ROOM_ID ,r.ROOM_NAME ,s.SCREEN_START_TIME ,e.EVENT_INFO, t.theater_id ,s.screen_id
+								 from theater t, room r, screen s, movie m ,event e
+								 where t.THEATER_ID=r.THEATER_ID 
+								 and r.room_id=s.ROOM_ID 
+								and s.movie_id = m.movie_id 
+								  and e.THEATER_ID=t.THEATER_ID 
+								 and s.MOVIE_ID = #{movieId}
+								 and t.THEATER_ID= #{theatherId}
+								 and s.screen_date in #{endDate}  
+							 and s.SCREEN_START_TIME >=#{screenStartTime}
+					 		 order by s.SCREEN_START_TIME 
+   
+   </select>
+   </mapper>

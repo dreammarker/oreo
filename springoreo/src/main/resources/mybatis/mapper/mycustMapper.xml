@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.MycustDAO">
+
+	<!-- 단건 조회 -->
+	<select id="getMycust" resultType="com.yedam.movie.MycustVO" parameterType="string">
+		<![CDATA[
+		SELECT	CUST_NUM,
+				CUST_NAME, 
+				CUST_BIRTH, 
+				CUST_ID, 
+				CUST_PWD,
+				CUST_PHONE, 
+				CUST_MAIL
+		 FROM  CUSTOMER
+		 WHERE CUST_ID = #{custId}
+		 ]]>
+	</select>
+	
+	<!-- 수정 -->
+	<update id="updateMycust" parameterType="com.yedam.movie.MycustVO">
+		UPDATE CUSTOMER SET
+				CUST_PWD = #{custPwd},
+				CUST_PHONE = #{custPhone}
+		WHERE CUST_ID = #{custId}
+	</update>
+</mapper>

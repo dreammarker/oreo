@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.SeatDAO">
+
+	<!-- 좌석내역 전체 조회  -->
+	<select id="getSeatList" resultType="map" parameterType="seatVO">
+
+		SELECT 	SEAT_ID 			as "seatId" , 
+				PERSON_NUM			as "personNum", 
+				SEAT_NAME			as "seatName", 
+				SEAT_PRICE			as "seatPrice", 
+				ROOM_ID				as "roomId"
+		 FROM SEAT
+		 ORDER BY SEAT_ID
+
+	</select>
+	
+	<!-- 단건 조회  -->
+	<select id="getSeat" resultType="seatVO" parameterType="string">
+		SELECT 	SEAT_ID, 
+				PERSON_NUM, 
+				SEAT_NAME, 
+				SEAT_PRICE,
+				ROOM_ID
+		 FROM SEAT
+ 		 WHERE SEAT_ID = #{seatId}
+	</select>
+	
+	<!-- 예매 좌석  -->
+	<select id="getReserveSeat" resultType="string" parameterType="string">
+		SELECT LISTAGG(SEAT_NUMBER, ',') WITHIN GROUP(ORDER BY SEAT_NUMBER) AS RESERVESEAT
+		 FROM ADVANCE
+		 WHERE SCREEN_ID = #{screenId}
+	</select>
+
+	<!-- 등록 -->
+	<insert id="insertSeat" parameterType="seatVO" >
+
+		<selectKey keyProperty="seatId" resultType="String" order="BEFORE">
+			select SEQSEAT.nextval from dual
+		</selectKey>
+		
+		INSERT INTO SEAT(
+					SEAT_ID, 
+					PERSON_NUM, 
+					SEAT_NAME, 
+					SEAT_PRICE,
+					ROOM_ID)
+
+		VALUES (
+			#{seatId},
+			#{personNum},
+			#{seatName},
+			#{seatPrice},
+			#{roomId}
+			)
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateSeat" parameterType="seatVO" >
+		UPDATE INTO SEAT SET
+		 WHERE SEAT_ID = #{seatId} 
+	</update>
+	
+	<!-- 삭제 -->
+	<delete id="deleteSeat" parameterType="string" >
+		DELETE FROM SEAT
+		 WHERE SEAT_ID = #{seatId} 
+	</delete>
+
+</mapper>

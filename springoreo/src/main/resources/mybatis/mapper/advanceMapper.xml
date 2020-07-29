@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.AdvanceDAO">
+
+	<select id="getAdvanceId" resultType="advanceVO" parameterType="String">
+	SELECT ADVANCE_ID, ADVANCE_SEAT_NUM, SEAT_NUMBER, ADVANCE_DATE, CUST_NUM, SCREEN_ID
+	 FROM ADVANCE WHERE ADVANCE_ID = #{advanceId}
+	</select>
+	
+	  <insert id="insertAdvance" parameterType="advanceVO">
+		<selectKey keyProperty="advanceId" resultType="String" order="BEFORE">
+			select advance_sequence.nextval from dual
+		</selectKey>
+  	INSERT INTO ADVANCE
+  				(ADVANCE_ID, ADVANCE_SEAT_NUM, SEAT_NUMBER, ADVANCE_DATE, CUST_NUM, SCREEN_ID)
+  	 VALUES (#{advanceId}, #{advanceSeatNum}, #{seatNumber}, sysdate, #{custNum}, #{screenId} )	
+  </insert>
+
+</mapper>

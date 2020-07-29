@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+
+	<typeAliases>	
+		<typeAlias type="com.yedam.movie.CustomerVO" alias="customerVO"/>		
+		<typeAlias type="com.yedam.movie.InquiryVO" alias="inquiryVO"/>
+		<typeAlias type="com.yedam.movie.CommentsVO" alias="commentsVO"/>
+		<typeAlias type="com.yedam.movie.CommentsListVO" alias="CommentslistVO"/>
+		<typeAlias type="com.yedam.movie.MovieVO" alias="movieVO"/>
+		<typeAlias type="com.yedam.movie.ReviewVO" alias="reviewVO"/>
+		<typeAlias type="com.yedam.movie.PaymentVO" alias="paymentVO"/>
+		<typeAlias type="com.yedam.movie.SeatVO" alias="seatVO"/>
+		<typeAlias type="com.yedam.movie.SnackVO" alias="snackVO"/>
+		<typeAlias type="com.yedam.movie.MovieVO" alias="movieReserveVO"/>
+		<typeAlias type="com.yedam.movie.TheatherVO" alias="theatherVO"/>
+		<typeAlias type="com.yedam.movie.AdvanceVO" alias="advanceVO"/>
+		<typeAlias type="com.yedam.movie.RoomVO" alias="roomVO"/>
+		<typeAlias type="com.yedam.movie.ScreenVO" alias="screenVO"/>
+		<typeAlias type="com.yedam.movie.ScreenSearchVO" alias="ScreenSearchVO"/>
+		<typeAlias type="com.yedam.movie.SearchVO" alias="SearchVO"/>
+	</typeAliases>
+
+
+</configuration>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.yedam.movie.MyalbumDAO">
+  
+  <select id="getMyalbumList" resultType="map" parameterType="string">
+  	<![CDATA[
+  	SELECT A.ALBUM_ID 		as "albumId", 
+  		   A.ALBUM_COMMENT 	as "albumComment", 
+  		   B.CUST_NUM 		as "custNum", 
+  		   B.MOVIE_ID 		as "movieId", 
+  		   B.MOVIE_TITLE 	as "movieTitle", 
+  		   B.MOVIE_POSTER 	as "moviePoster"
+ 
+  	FROM ALBUM A,
+  		(SELECT DISTINCT MO.MOVIE_TITLE, MO.MOVIE_ID, MO.MOVIE_POSTER, AD.CUST_NUM
+  		 FROM MOVIE MO, ADVANCE AD, SCREEN SC
+  		 WHERE SC.MOVIE_ID=MO.MOVIE_ID AND 
+  		 	   AD.SCREEN_ID=SC.SCREEN_ID) B
+  	
+  	WHERE A.CUST_NUM(+) = B.CUST_NUM AND A.MOVIE_ID(+) = B.MOVIE_ID AND
+  		  B.CUST_NUM=${value}
+   
+    ORDER BY ALBUM_ID DESC
+    ]]>
+  </select>
+  
+  <insert id="insertMyalbum" parameterType="com.yedam.movie.MyalbumVO">
+  	INSERT INTO ALBUM
+  				(ALBUM_ID, ALBUM_COMMENT, MOVIE_ID, CUST_NUM)
+  	VALUES (seq_album.nextval , #{albumComment}, #{movieId}, #{custNum} )	
+  </insert>
+  
+  <update id="updateMyalbum" parameterType="com.yedam.movie.MyalbumVO">
+  	UPDATE ALBUM SET
+  			ALBUM_COMMENT = #{albumComment}
+  	WHERE MOVIE_ID = #{movieId} 
+  </update>
+  
+  <delete id="deleteMyalbum" parameterType="string">
+  	DELETE FROM ALBUM
+  	WHERE ALBUM_ID = #{albumId}
+  </delete>
+  
+</mapper>

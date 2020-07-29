@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.AdminDAO">
+
+	<!-- 일별 매출현황 -->
+	<select id="salesStatusDay" resultType="map">
+		SELECT TO_CHAR(A.ADVANCE_DATE,'YYYY-MM-DD') as "Date", SUM(P.PAYMENT_AMOUNT) as "Total"
+		FROM ADVANCE A, PAYMENT P
+		WHERE A.ADVANCE_ID = P.ADVANCE_ID
+		AND TO_CHAR(A.ADVANCE_DATE, 'YYYY-MM') = #{advanceDate}
+		GROUP BY TO_CHAR(A.ADVANCE_DATE,'YYYY-MM-DD')
+		ORDER BY "Date"
+	</select>
+
+	<!-- 월별 매출현황 -->
+	<select id="salesStatusMonth" resultType="map">
+		SELECT TO_CHAR(A.ADVANCE_DATE,'YYYY-MM') as "Date", SUM(P.PAYMENT_AMOUNT) as "Total"
+		FROM ADVANCE A, PAYMENT P
+		WHERE A.ADVANCE_ID = P.ADVANCE_ID
+		AND TO_CHAR(A.ADVANCE_DATE, 'YYYY') = #{advanceDate}
+		GROUP BY TO_CHAR(A.ADVANCE_DATE,'YYYY-MM')
+		ORDER BY "Date"
+	</select>
+
+
+</mapper>

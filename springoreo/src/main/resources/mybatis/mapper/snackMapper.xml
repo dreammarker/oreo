@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.SnackDAO">
+
+	<!-- 스낵내역 전체 조회  -->
+	<select id="getSnackList" resultType="map" parameterType="snackVO">
+		SELECT 	SNACK_ID		as "snackId",
+				SNACK			as "snack",
+				SNACK_PRICE		as "snackPrice",
+				ADVANCE_ID		as "advanceId"
+		 FROM SNACK
+		
+	</select>
+	
+	<!-- 단건 조회  -->
+	<select id="getSnack" resultType="snackVO" parameterType="string">
+		SELECT 	SNACK_ID,
+				SNACK,
+				SNACK_PRICE,
+				ADVANCE_ID
+		 FROM SNACK
+		 WHERE SNACK_ID = #{snackId}
+	</select>
+
+	<!-- 등록 -->
+	<insert id="insertSnack" parameterType="snackVO" >
+
+		<selectKey keyProperty="snackId" resultType="String" order="BEFORE">
+			select SEQSNACK.nextval from dual
+		</selectKey>
+		INSERT INTO SNACK(
+				SNACK_ID,
+				SNACK,
+				SNACK_PRICE,
+				ADVANCE_ID
+				)
+
+		VALUES (
+			#{snackId},
+			#{snack},
+			#{snackPrice},
+			#{advanceId}
+			)
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateSnack" parameterType="snackVO" >
+		UPDATE	SNACK  SET SNACK
+			SNACK = #{snack},
+			SNACK_PRICE = #{snackPrice},
+			ADVANCE_ID = #{advanceId},
+			WHERE SNACK_ID = #{snackId}
+	</update>
+	
+	<!-- 삭제 -->
+	<delete id="deleteSnack" parameterType="string" >
+		DELETE FROM SNACK
+		 WHERE SNACK_ID = #{snackId}
+	</delete>
+
+</mapper>

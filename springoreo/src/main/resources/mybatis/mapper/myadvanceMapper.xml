@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yedam.movie.MyadvanceDAO">
+
+	<!-- 전체조회 -->
+	<select id="getMyadvanceList" resultType="map" parameterType="com.yedam.movie.MyadvanceVO">
+		SELECT AD.ADVANCE_DATE 		as "advanceDate", 
+			   AD.ADVANCE_ID 		as "advanceId", 
+			   TH.THEATER_NAME 		as "theaterName", 
+			   SC.SCREEN_DATE 		as "screenDate",
+			   SC.SCREEN_START_TIME as "screenStartTime", 
+			   MO.MOVIE_TITLE 		as "movieTitle", 
+			   RO.ROOM_NAME			as "roomName", 
+			   AD.ADVANCE_SEAT_NUM 	as "advanceSeatNum", 
+			   AD.SEAT_NUMBER 		as "seatNumber", 
+			   SN.SNACK				as "snack", 
+			   CU.CUST_NUM 			as "custNum", 
+			   CU.STAMP			 	as "stamp", 
+			   CU.MILEAGE 			as "mileage"
+		
+		FROM 	MOVIE MO, SNACK SN, ADVANCE AD, THEATER TH, SCREEN SC, ROOM RO, CUSTOMER CU
+		
+		WHERE 	TH.THEATER_ID = RO.THEATER_ID AND
+				RO.ROOM_ID = SC.ROOM_ID AND
+				MO.MOVIE_ID = SC.MOVIE_ID AND
+				SC.SCREEN_ID = AD.SCREEN_ID AND
+				CU.CUST_NUM = AD.CUST_NUM AND
+				AD.ADVANCE_ID = SN.ADVANCE_ID AND
+				SC.SCREEN_DATE>=TRUNC(SYSDATE) AND CU.CUST_NUM = #{custNum}
+		
+		ORDER BY AD.ADVANCE_ID
+		
+
+	</select>
+	
+	<!-- 지난예매내역조회 -->
+	<select id="getLastMyadvance" resultType="map" parameterType="com.yedam.movie.MyadvanceVO">
+		<![CDATA[
+		SELECT AD.ADVANCE_DATE 		as "advanceDate", 
+			   AD.ADVANCE_ID 		as "advanceId", 
+			   TH.THEATER_NAME 		as "theaterName", 
+			   SC.SCREEN_DATE 		as "screenDate",
+			   SC.SCREEN_START_TIME as "screenStartTime", 
+			   MO.MOVIE_TITLE 		as "movieTitle", 
+			   RO.ROOM_NAME			as "roomName", 
+			   AD.ADVANCE_SEAT_NUM 	as "advanceSeatNum", 
+			   AD.SEAT_NUMBER 		as "seatNumber", 
+			   SN.SNACK				as "snack", 
+			   CU.CUST_NUM 			as "custNum", 
+			   CU.STAMP			 	as "stamp", 
+			   CU.MILEAGE 			as "mileage"
+		
+		FROM 	MOVIE MO, SNACK SN, ADVANCE AD, THEATER TH, SCREEN SC, ROOM RO, CUSTOMER CU
+		
+		WHERE 	TH.THEATER_ID = RO.THEATER_ID AND
+				RO.ROOM_ID = SC.ROOM_ID AND
+				MO.MOVIE_ID = SC.MOVIE_ID AND
+				SC.SCREEN_ID = AD.SCREEN_ID AND
+				CU.CUST_NUM = AD.CUST_NUM AND
+				AD.ADVANCE_ID = SN.ADVANCE_ID AND
+				SYSDATE BETWEEN AD.ADVANCE_DATE AND AD.ADVANCE_DATE+60 AND
+				SC.SCREEN_DATE < TRUNC(SYSDATE) AND 
+				CU.CUST_NUM = #{custNum}
+		
+		ORDER BY AD.ADVANCE_DATE DESC ]]>
+
+
+	</select>
+	
+	<!-- 예매삭제 -->
+	<delete id="deleteMyadvance" parameterType="string" >
+		DELETE FROM ADVANCE
+		WHERE ADVANCE_ID = #{advanceId}
+	</delete>
+
+	<!-- 프로지서 사용 -->
+	<insert id="advanceCancelProc" statementType="CALLABLE" parameterType="map">
+		
+			call ADVANCE_CANCEL_PROC(
+			#{p_advance_id},
+			#{p_cust_num},
+			#{p_advance_seat_num}
+			)
+			
+		
+	</insert>
+	
+	<!-- 스탬프 조회 -->
+	<select id="getStamp" parameterType="string" resultType="com.yedam.movie.MyadvanceVO">
+		SELECT STAMP
+		FROM CUSTOMER
+		WHERE CUST_NUM = #{custNum}
+	</select>
+	
+	<!-- 마일리지 조회 -->
+	<select id="getMileage" parameterType="string" resultType="com.yedam.movie.MyadvanceVO">
+		SELECT MILEAGE
+		FROM CUSTOMER
+		WHERE CUST_NUM = #{custNum}
+	</select>
+
+	
+	
+
+</mapper>
